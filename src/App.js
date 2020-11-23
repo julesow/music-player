@@ -5,6 +5,7 @@ import data from "./data";
 
 import Song from "./components/Song";
 import Player from "./components/Player";
+import Library from "./components/Library";
 
 function App() {
   //states
@@ -20,6 +21,7 @@ function App() {
         setIsPlaying={setIsPlaying}
         currentSong={currentSong}
       />
+      <Library className="library" songs={songs} />
     </div>
   );
 }
