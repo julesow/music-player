@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./styles/app.scss";
 
 import data from "./data";
@@ -12,6 +12,20 @@ function App() {
   const [songs, setSongs] = useState(data());
   const [currentSong, setCurrentSong] = useState(songs[0]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [songInfo, setSongInfo] = useState({
+    currentTime: 0,
+    duration: 0
+  });
+
+  // ref
+  const audioRef = useRef(null);
+
+  const timeUpdateHandler = e => {
+    const duration = e.target.duration;
+    const currentTime = e.target.currentTime;
+
+    setSongInfo({ ...songInfo, duration, currentTime });
+  };
 
   return (
     <div className="App">
@@ -20,12 +34,24 @@ function App() {
         isPlaying={isPlaying}
         setIsPlaying={setIsPlaying}
         currentSong={currentSong}
+        audioRef={audioRef}
+        setSongInfo={setSongInfo}
+        songInfo={songInfo}
       />
       <Library
         className="library"
         songs={songs}
         setCurrentSong={setCurrentSong}
+        audioRef={audioRef}
+        isPlaying={isPlaying}
       />
+
+      <audio
+        onLoadedMetadata={timeUpdateHandler}
+        onTimeUpdate={timeUpdateHandler}
+        ref={audioRef}
+        src={currentSong.audio}
+      ></audio>
     </div>
   );
 }
