@@ -45,7 +45,7 @@ const Player = ({
           value={songInfo.currentTime}
           type="range"
         />
-        <p>{formatTime(songInfo.duration)}</p>
+        <p>{formatTime(songInfo.duration || 0)}</p>
       </div>
       <div className="play-control">
         <FontAwesomeIcon className="skip-left" size="2x" icon={faAngleLeft} />
