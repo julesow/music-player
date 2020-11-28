@@ -4,8 +4,8 @@ const Song = ({ currentSong: { artist, song, cover, name } }) => {
   return (
     <div className="song-container">
       <img alt={name} src={cover}></img>
-      <h2>{artist}</h2>
-      <h3>{song}</h3>
+      <h2>{name}</h2>
+      <h3>{artist}</h3>
     </div>
   );
 };

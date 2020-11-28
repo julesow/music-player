@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
@@ -9,12 +9,23 @@ import {
 
 const Player = ({
   currentSong,
+  setCurrentSong,
   isPlaying,
   setIsPlaying,
   audioRef,
   setSongInfo,
-  songInfo
+  songInfo,
+  setSongs,
+  songs
 }) => {
+  useEffect(() => {
+    const newSongs = songs.map(song =>
+      song.id === currentSong.id
+        ? { ...song, active: true }
+        : { ...song, active: false }
+    );
+    setSongs(newSongs);
+  }, [currentSong]);
   // to move to utils folder
   const formatTime = time => {
     return (
@@ -33,7 +44,20 @@ const Player = ({
     audioRef.current.currentTime = e.target.value;
     setSongInfo({ ...songInfo, currentTime: e.target.value });
   };
+  const skipTrackHandler = direction => {
+    let currentSongIndex = songs.findIndex(song => song.id === currentSong.id);
 
+    if (direction === "skip-forward") {
+      setCurrentSong(songs[(currentSongIndex + 1) % songs.length]);
+    }
+    if (direction === "skip-left") {
+      if ((currentSongIndex - 1) % songs.length === -1) {
+        setCurrentSong(songs[songs.length - 1]);
+        return;
+      }
+      setCurrentSong(songs[(currentSongIndex - 1) % songs.length]);
+    }
+  };
   return (
     <div className="player">
       <div className="time-control">
@@ -48,7 +72,12 @@ const Player = ({
         <p>{formatTime(songInfo.duration || 0)}</p>
       </div>
       <div className="play-control">
-        <FontAwesomeIcon className="skip-left" size="2x" icon={faAngleLeft} />
+        <FontAwesomeIcon
+          onClick={() => skipTrackHandler("skip-left")}
+          className="skip-left"
+          size="2x"
+          icon={faAngleLeft}
+        />
         <FontAwesomeIcon
           className="play"
           size="2x"
@@ -56,6 +85,7 @@ const Player = ({
           onClick={playSongHandler}
         />
         <FontAwesomeIcon
+          onClick={() => skipTrackHandler("skip-forward")}
           className="skip-forward"
           size="2x"
           icon={faAngleRight}
