@@ -7,6 +7,8 @@ import {
   faPause
 } from "@fortawesome/free-solid-svg-icons";
 
+import { playAudio } from "../util";
+
 const Player = ({
   currentSong,
   setCurrentSong,
@@ -53,23 +55,38 @@ const Player = ({
     if (direction === "skip-left") {
       if ((currentSongIndex - 1) % songs.length === -1) {
         setCurrentSong(songs[songs.length - 1]);
+        playAudio(isPlaying, audioRef);
         return;
       }
       setCurrentSong(songs[(currentSongIndex - 1) % songs.length]);
     }
+    playAudio(isPlaying, audioRef);
   };
+
+  const trackAnimation = {
+    transform: `translateX(${songInfo.animationPercent}%)`
+  };
+
   return (
     <div className="player">
       <div className="time-control">
         <p>{formatTime(songInfo.currentTime)}</p>
-        <input
-          onChange={dragHandler}
-          min={0}
-          max={songInfo.duration}
-          value={songInfo.currentTime}
-          type="range"
-        />
-        <p>{formatTime(songInfo.duration || 0)}</p>
+        <div
+          style={{
+            background: `linear-gradient(to right,${currentSong.color[0]},${currentSong.color[1]})`
+          }}
+          className="track"
+        >
+          <input
+            onChange={dragHandler}
+            min={0}
+            max={songInfo.duration || 0}
+            value={songInfo.currentTime}
+            type="range"
+          />
+          <div style={trackAnimation} className="animate-track"></div>
+        </div>
+        <p>{songInfo.duration ? formatTime(songInfo.duration) : "0:00"}</p>
       </div>
       <div className="play-control">
         <FontAwesomeIcon
